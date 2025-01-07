@@ -38,7 +38,7 @@ jobs:
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.MYSQL_PASSWORD }} < sql/initialize.sql
 
-      - name: Debug: Show Table Data
+      - name: Debug:Show Table Data
         env:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         run: |
