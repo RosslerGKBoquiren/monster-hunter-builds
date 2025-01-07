@@ -1,4 +1,4 @@
-name: Initialize MySQL Database
+name: Initialize and Test MySQL Database
 
 on:
   push:
@@ -35,3 +35,9 @@ jobs:
       - name: Import Database Schema
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -proot < sql/initialize.sql
+
+      - name: Test Database Queries
+        run: |
+          echo "SHOW DATABASES;" | mysql -h 127.0.0.1 -P 3306 -u root -proot
+          echo "USE monster_hunter; SHOW TABLES;" | mysql -h 127.0.0.1 -P 3306 -u root -proot
+          echo "SELECT * FROM monsters;" | mysql -h 127.0.0.1 -P 3306 -u root -proot
