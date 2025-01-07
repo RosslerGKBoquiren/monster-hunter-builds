@@ -12,7 +12,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -33,11 +33,15 @@ jobs:
           done
 
       - name: Import Database Schema
+        env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u root -proot < sql/initialize.sql
+          mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.MYSQL_PASSWORD }} < sql/initialize.sql
 
       - name: Test Database Queries
+        env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         run: |
-          echo "SHOW DATABASES;" | mysql -h 127.0.0.1 -P 3306 -u root -proot
-          echo "USE monster_hunter; SHOW TABLES;" | mysql -h 127.0.0.1 -P 3306 -u root -proot
-          echo "SELECT * FROM monsters;" | mysql -h 127.0.0.1 -P 3306 -u root -proot
+          echo "SHOW DATABASES;" | mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.MYSQL_PASSWORD }}
+          echo "USE monster_hunter; SHOW TABLES;" | mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.MYSQL_PASSWORD }}
+          echo "USE monster_hunter; SELECT * FROM monsters;" | mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.MYSQL_PASSWORD }}
