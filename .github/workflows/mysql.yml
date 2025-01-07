@@ -1,0 +1,37 @@
+name: Initialize MySQL Database
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-database:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Wait for MySQL to Start
+        run: |
+          until mysqladmin ping -h 127.0.0.1 --silent; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+
+      - name: Import Database Schema
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root -proot < sql/initialize.sql
